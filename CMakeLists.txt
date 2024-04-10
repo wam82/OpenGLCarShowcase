@@ -66,7 +66,7 @@ aux_source_directory(imgui IMGUI_SOURCE)
 
 include_directories(src)
 
-add_executable(${PROJECT_NAME} ${SOURCES} ${IMGUI_SOURCE} ${ASSIMP_SOURCES}
+add_executable(${PROJECT_NAME} ${SOURCES} ${IMGUI_SOURCE} 
 		src/main.cpp
 )
 target_link_libraries(${PROJECT_NAME} ${ALL_LIBS} ${CMAKE_DL_LIBS})

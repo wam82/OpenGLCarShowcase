@@ -31,6 +31,8 @@ struct carPart {
     vector<Vertex> vertices;
     string name;
     Material material;
+    GLuint texture;
+    bool hasTexture = false;
 
     glm::mat4 modelMatrix = glm::mat4(1.f);
     GLuint VAO;
@@ -52,7 +54,7 @@ static vector<carPart> loadModel(const string path)
         }
 
         for(tinyobj::shape_t shape: shapes){
-            cout<<shape.name<<endl;
+//            cout<<shape.name<<endl;
             carPart currentPart;
             currentPart.name = shape.name;
             for(tinyobj::index_t index : shape.mesh.indices){
@@ -61,6 +63,10 @@ static vector<carPart> loadModel(const string path)
                         attrib.vertices[3 * index.vertex_index + 0],
                         attrib.vertices[3 * index.vertex_index + 1],
                         attrib.vertices[3 * index.vertex_index + 2]
+                };
+                currentVertex.texture = {
+                        attrib.texcoords[2 * index.texcoord_index + 0],
+                        attrib.texcoords[2 * index.texcoord_index + 1]
                 };
                 currentVertex.normal = {
                         attrib.normals[3 * index.normal_index + 0],

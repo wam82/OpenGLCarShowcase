@@ -110,6 +110,10 @@ public:
         glUseProgram(0);
     }
 
+    void setBool(GLboolean value, const GLchar* name){
+        glUniform1i(glGetUniformLocation(this->id, name), value);
+    }
+
     void set1f(GLfloat value, const GLchar* name){
 //        this->use();
 

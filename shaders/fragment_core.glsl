@@ -12,8 +12,8 @@ uniform vec3 modifiedColor;
 uniform vec3 lightColor;
 uniform float opacity;
 
-uniform bool hasIridescence;
-uniform sampler2D iridescentTexture;
+uniform bool hasTexture;
+uniform sampler2D objectTexture;
 
 void main(){
     float ka = 0.1;
@@ -37,10 +37,11 @@ void main(){
     float specularConstant = pow(max(dot(positionToView, reflectedDirection), 0), shininess);
     vec3 specularColor = lightColor * specularConstant * ks;
 
-    vec3 iridescentColor = vec3(1.0);
-    if(hasIridescence){
-        iridescentColor = texture(iridescentTexture, vs_texture_coordinate).rgb;
+    vec3 textureColor = vec3(1.f, 1.f, 1.f);
+    if(hasTexture){
+        textureColor = texture(objectTexture, vs_texture_coordinate).rgb;
+//        textureColor = vec3(0.3f, 1.f, 0.3f);
     }
 
-    fs_color = vec4(modifiedColor * iridescentColor, opacity) * (vec4(ambientLight, 1.f) + vec4(diffuseLight, 1.f) + vec4(specularColor, 1.f));
+    fs_color = vec4(modifiedColor * textureColor, opacity) * (vec4(ambientLight, 1.f) + vec4(diffuseLight, 1.f) + vec4(specularColor, 1.f));
 }
