@@ -53,6 +53,16 @@ public:
         updateView();
     }
 
+    void goUp(float speed){
+        this->position += speed * this->up;
+        updateView();
+    }
+
+    void goDown(float speed){
+        this->position -= speed * this->up;
+        updateView();
+    }
+
     void strafeRight(float speed){
         this->position +=  speed * this->right;
         updateView();

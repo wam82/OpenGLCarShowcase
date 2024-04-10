@@ -97,6 +97,12 @@ void controlCamera(GLFWwindow* window, float &delta, Camera &cam){
     if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
         cam.strafeRight(cameraSpeed);
     }
+    if(glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS){
+        cam.goUp(cameraSpeed);
+    }
+    if(glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS){
+        cam.goDown(cameraSpeed);
+    }
     if(glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS){
         cam.panUp();
     }
