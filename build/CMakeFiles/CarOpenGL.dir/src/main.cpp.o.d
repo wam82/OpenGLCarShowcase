@@ -1067,10 +1067,17 @@ CMakeFiles/CarOpenGL.dir/src/main.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX14.2.sdk/usr/include/c++/v1/__filesystem/path_iterator.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX14.2.sdk/usr/include/c++/v1/__filesystem/recursive_directory_iterator.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX14.2.sdk/usr/include/c++/v1/__filesystem/u8path.h \
-  /Users/wamessier/Desktop/Car_OpenGL/CarOpenGL/src/Loader.h \
+  /Users/wamessier/Desktop/Car_OpenGL/CarOpenGL/src/Camera.h \
+  /Users/wamessier/Desktop/Car_OpenGL/CarOpenGL/src/OBJ_Loader.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX14.2.sdk/usr/include/c++/v1/sstream \
-  /Users/wamessier/Desktop/Car_OpenGL/CarOpenGL/imgui/imgui.h \
-  /Users/wamessier/Desktop/Car_OpenGL/CarOpenGL/imgui/imconfig.h \
-  /Users/wamessier/Desktop/Car_OpenGL/CarOpenGL/imgui/imgui_impl_glfw.h \
-  /Users/wamessier/Desktop/Car_OpenGL/CarOpenGL/imgui/imgui_impl_opengl3.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX14.2.sdk/usr/include/TargetConditionals.h
+  /Users/wamessier/Desktop/Car_OpenGL/CarOpenGL/src/Material.h \
+  /Users/wamessier/Desktop/Car_OpenGL/CarOpenGL/src/stb_image.cpp \
+  /Users/wamessier/Desktop/Car_OpenGL/CarOpenGL/src/stb_image.h \
+  /Library/Developer/CommandLineTools/usr/lib/clang/15.0.0/include/emmintrin.h \
+  /Library/Developer/CommandLineTools/usr/lib/clang/15.0.0/include/xmmintrin.h \
+  /Library/Developer/CommandLineTools/usr/lib/clang/15.0.0/include/mmintrin.h \
+  /Library/Developer/CommandLineTools/usr/lib/clang/15.0.0/include/mm_malloc.h \
+  /Users/wamessier/Desktop/Car_OpenGL/CarOpenGL/src/tiny_obj_loader.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX14.2.sdk/usr/include/c++/v1/map \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX14.2.sdk/usr/include/c++/v1/__tree \
+  /Users/wamessier/Desktop/Car_OpenGL/CarOpenGL/src/Light.h

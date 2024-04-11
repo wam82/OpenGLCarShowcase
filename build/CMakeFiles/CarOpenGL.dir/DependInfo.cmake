@@ -14,7 +14,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/Users/wamessier/Desktop/Car_OpenGL/CarOpenGL/imgui/imgui_impl_opengl3.cpp" "CMakeFiles/CarOpenGL.dir/imgui/imgui_impl_opengl3.cpp.o" "gcc" "CMakeFiles/CarOpenGL.dir/imgui/imgui_impl_opengl3.cpp.o.d"
   "/Users/wamessier/Desktop/Car_OpenGL/CarOpenGL/imgui/imgui_tables.cpp" "CMakeFiles/CarOpenGL.dir/imgui/imgui_tables.cpp.o" "gcc" "CMakeFiles/CarOpenGL.dir/imgui/imgui_tables.cpp.o.d"
   "/Users/wamessier/Desktop/Car_OpenGL/CarOpenGL/imgui/imgui_widgets.cpp" "CMakeFiles/CarOpenGL.dir/imgui/imgui_widgets.cpp.o" "gcc" "CMakeFiles/CarOpenGL.dir/imgui/imgui_widgets.cpp.o.d"
-  "/Users/wamessier/Desktop/Car_OpenGL/CarOpenGL/src/old/main2.cpp" "CMakeFiles/CarOpenGL.dir/src/old/main2.cpp.o" "gcc" "CMakeFiles/CarOpenGL.dir/src/old/main2.cpp.o.d"
+  "/Users/wamessier/Desktop/Car_OpenGL/CarOpenGL/src/main.cpp" "CMakeFiles/CarOpenGL.dir/src/main.cpp.o" "gcc" "CMakeFiles/CarOpenGL.dir/src/main.cpp.o.d"
   )
 
 # Targets to which this target links.

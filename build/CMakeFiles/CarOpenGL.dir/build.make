@@ -153,19 +153,19 @@ CMakeFiles/CarOpenGL.dir/imgui/imgui_widgets.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/CarOpenGL.dir/imgui/imgui_widgets.cpp.s"
 	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/wamessier/Desktop/Car_OpenGL/CarOpenGL/imgui/imgui_widgets.cpp -o CMakeFiles/CarOpenGL.dir/imgui/imgui_widgets.cpp.s
 
-CMakeFiles/CarOpenGL.dir/src/old/main2.cpp.o: CMakeFiles/CarOpenGL.dir/flags.make
-CMakeFiles/CarOpenGL.dir/src/old/main2.cpp.o: /Users/wamessier/Desktop/Car_OpenGL/CarOpenGL/src/old/main2.cpp
-CMakeFiles/CarOpenGL.dir/src/old/main2.cpp.o: CMakeFiles/CarOpenGL.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/wamessier/Desktop/Car_OpenGL/CarOpenGL/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/CarOpenGL.dir/src/old/main2.cpp.o"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/CarOpenGL.dir/src/old/main2.cpp.o -MF CMakeFiles/CarOpenGL.dir/src/old/main2.cpp.o.d -o CMakeFiles/CarOpenGL.dir/src/old/main2.cpp.o -c /Users/wamessier/Desktop/Car_OpenGL/CarOpenGL/src/old/main2.cpp
+CMakeFiles/CarOpenGL.dir/src/main.cpp.o: CMakeFiles/CarOpenGL.dir/flags.make
+CMakeFiles/CarOpenGL.dir/src/main.cpp.o: /Users/wamessier/Desktop/Car_OpenGL/CarOpenGL/src/main.cpp
+CMakeFiles/CarOpenGL.dir/src/main.cpp.o: CMakeFiles/CarOpenGL.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/wamessier/Desktop/Car_OpenGL/CarOpenGL/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/CarOpenGL.dir/src/main.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/CarOpenGL.dir/src/main.cpp.o -MF CMakeFiles/CarOpenGL.dir/src/main.cpp.o.d -o CMakeFiles/CarOpenGL.dir/src/main.cpp.o -c /Users/wamessier/Desktop/Car_OpenGL/CarOpenGL/src/main.cpp
 
-CMakeFiles/CarOpenGL.dir/src/old/main2.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/CarOpenGL.dir/src/old/main2.cpp.i"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/wamessier/Desktop/Car_OpenGL/CarOpenGL/src/old/main2.cpp > CMakeFiles/CarOpenGL.dir/src/old/main2.cpp.i
+CMakeFiles/CarOpenGL.dir/src/main.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/CarOpenGL.dir/src/main.cpp.i"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/wamessier/Desktop/Car_OpenGL/CarOpenGL/src/main.cpp > CMakeFiles/CarOpenGL.dir/src/main.cpp.i
 
-CMakeFiles/CarOpenGL.dir/src/old/main2.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/CarOpenGL.dir/src/old/main2.cpp.s"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/wamessier/Desktop/Car_OpenGL/CarOpenGL/src/old/main2.cpp -o CMakeFiles/CarOpenGL.dir/src/old/main2.cpp.s
+CMakeFiles/CarOpenGL.dir/src/main.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/CarOpenGL.dir/src/main.cpp.s"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/wamessier/Desktop/Car_OpenGL/CarOpenGL/src/main.cpp -o CMakeFiles/CarOpenGL.dir/src/main.cpp.s
 
 # Object files for target CarOpenGL
 CarOpenGL_OBJECTS = \
@@ -175,7 +175,7 @@ CarOpenGL_OBJECTS = \
 "CMakeFiles/CarOpenGL.dir/imgui/imgui_impl_opengl3.cpp.o" \
 "CMakeFiles/CarOpenGL.dir/imgui/imgui_tables.cpp.o" \
 "CMakeFiles/CarOpenGL.dir/imgui/imgui_widgets.cpp.o" \
-"CMakeFiles/CarOpenGL.dir/src/old/main2.cpp.o"
+"CMakeFiles/CarOpenGL.dir/src/main.cpp.o"
 
 # External object files for target CarOpenGL
 CarOpenGL_EXTERNAL_OBJECTS =
@@ -186,7 +186,7 @@ CarOpenGL: CMakeFiles/CarOpenGL.dir/imgui/imgui_impl_glfw.cpp.o
 CarOpenGL: CMakeFiles/CarOpenGL.dir/imgui/imgui_impl_opengl3.cpp.o
 CarOpenGL: CMakeFiles/CarOpenGL.dir/imgui/imgui_tables.cpp.o
 CarOpenGL: CMakeFiles/CarOpenGL.dir/imgui/imgui_widgets.cpp.o
-CarOpenGL: CMakeFiles/CarOpenGL.dir/src/old/main2.cpp.o
+CarOpenGL: CMakeFiles/CarOpenGL.dir/src/main.cpp.o
 CarOpenGL: CMakeFiles/CarOpenGL.dir/build.make
 CarOpenGL: /Library/Developer/CommandLineTools/SDKs/MacOSX14.2.sdk/System/Library/Frameworks/OpenGL.framework/OpenGL.tbd
 CarOpenGL: /Library/Developer/CommandLineTools/SDKs/MacOSX14.2.sdk/System/Library/Frameworks/OpenGL.framework/OpenGL.tbd

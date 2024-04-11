@@ -273,29 +273,29 @@ imgui/imgui_widgets.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/CarOpenGL.dir/build.make CMakeFiles/CarOpenGL.dir/imgui/imgui_widgets.cpp.s
 .PHONY : imgui/imgui_widgets.cpp.s
 
-src/old/main2.o: src/old/main2.cpp.o
-.PHONY : src/old/main2.o
+src/main.o: src/main.cpp.o
+.PHONY : src/main.o
 
 # target to build an object file
-src/old/main2.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CarOpenGL.dir/build.make CMakeFiles/CarOpenGL.dir/src/old/main2.cpp.o
-.PHONY : src/old/main2.cpp.o
+src/main.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CarOpenGL.dir/build.make CMakeFiles/CarOpenGL.dir/src/main.cpp.o
+.PHONY : src/main.cpp.o
 
-src/old/main2.i: src/old/main2.cpp.i
-.PHONY : src/old/main2.i
+src/main.i: src/main.cpp.i
+.PHONY : src/main.i
 
 # target to preprocess a source file
-src/old/main2.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CarOpenGL.dir/build.make CMakeFiles/CarOpenGL.dir/src/old/main2.cpp.i
-.PHONY : src/old/main2.cpp.i
+src/main.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CarOpenGL.dir/build.make CMakeFiles/CarOpenGL.dir/src/main.cpp.i
+.PHONY : src/main.cpp.i
 
-src/old/main2.s: src/old/main2.cpp.s
-.PHONY : src/old/main2.s
+src/main.s: src/main.cpp.s
+.PHONY : src/main.s
 
 # target to generate assembly for a file
-src/old/main2.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/CarOpenGL.dir/build.make CMakeFiles/CarOpenGL.dir/src/old/main2.cpp.s
-.PHONY : src/old/main2.cpp.s
+src/main.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CarOpenGL.dir/build.make CMakeFiles/CarOpenGL.dir/src/main.cpp.s
+.PHONY : src/main.cpp.s
 
 # Help Target
 help:
@@ -324,9 +324,9 @@ help:
 	@echo "... imgui/imgui_widgets.o"
 	@echo "... imgui/imgui_widgets.i"
 	@echo "... imgui/imgui_widgets.s"
-	@echo "... src/old/main2.o"
-	@echo "... src/old/main2.i"
-	@echo "... src/old/main2.s"
+	@echo "... src/main.o"
+	@echo "... src/main.i"
+	@echo "... src/main.s"
 .PHONY : help
 
 

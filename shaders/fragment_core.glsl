@@ -11,15 +11,15 @@ uniform vec3 cameraPosition;
 uniform vec3 modifiedColor;
 uniform vec3 lightColor;
 uniform float opacity;
+uniform float ka;
+uniform float kd;
+uniform float ks;
+uniform float shininess;
 
 uniform bool hasTexture;
 uniform sampler2D objectTexture;
 
 void main(){
-    float ka = 0.1;
-    float kd = 0.6;
-    float ks = 1.0;
-    float shininess = 2;
 
     //Ambient light
     vec3 ambientLight = vec3(1.f) * ka;
@@ -32,7 +32,7 @@ void main(){
 
     //Specular light
     vec3 lightToPosition = normalize(vs_position - lightPosition0);
-    vec3 reflectedDirection = normalize(reflect(lightToPosition, normalize(vs_normal)));
+    vec3 reflectedDirection = normalize(2 * normalize(vs_normal) * max( dot( normalize(vs_normal), positionToLight), 0.0f) - positionToLight);
     vec3 positionToView = normalize(cameraPosition - vs_position);
     float specularConstant = pow(max(dot(positionToView, reflectedDirection), 0), shininess);
     vec3 specularColor = lightColor * specularConstant * ks;

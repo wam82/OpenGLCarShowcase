@@ -13,10 +13,11 @@
 #include "Shader.h"
 #include "Camera.h"
 #include "OBJ_Loader.h"
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
-#include "stb_image.cpp"
+#include "Light.h"
+//#include "imgui.h"
+//#include "imgui_impl_glfw.h"
+//#include "imgui_impl_opengl3.h"
+//#include "stb_image.cpp"
 #include <unordered_map>
 
 using namespace std;
@@ -58,30 +59,17 @@ int frameBufferWidth = 0;
 int frameBufferHeight = 0;
 bool isOpened = false;
 
-GLuint loadTexture(const char* path) {
-    GLuint texture;
+vector<glm::vec3> colors{
+        glm::vec3((float)39/255, (float)182/255, (float)225/255),
+        glm::vec3((float)240/255, (float)223/255, (float)175/255),
+        glm::vec3((float)220/255, (float)20/255, (float)60/255),
+        glm::vec3((float)46/255, (float)139/255, (float)87/255),
+        glm::vec3((float)192/255, (float)192/255, (float)192/255)
+};
+int colorIndex = 0;
 
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    stbi_set_flip_vertically_on_load(true);
-
-    int width, height, nrChannels;
-    unsigned char *data = stbi_load(path, &width, &height, &nrChannels, 0);
-    if (data) {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    } else {
-        std::cout << "Failed to load texture" << std::endl;
-    }
-    stbi_image_free(data);
-    return texture;
-}
+vector<GLuint> textures;
+int textureIndex = 0;
 
 void controlCamera(GLFWwindow* window, float &delta, Camera &cam){
     const float cameraSpeed = 1.f * delta;
@@ -166,14 +154,102 @@ void frameBufferResize(GLFWwindow* window, int width, int height){
     glViewport(0, 0, frameBufferWidth, frameBufferHeight);
 }
 
-void changeColor(GLFWwindow* window, vector<carPart>& R32, glm::vec3& newColor){
-    if(glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS){
-        newColor = glm::vec3(1.0f, 0.5f, 0.31f);
-        for(carPart& part : R32) {
-            if (part.name.find("Tire")) {
-                part.material.color = newColor;
+void loadPaint(vector<carPart>& car, int index){
+    GLuint t = textures[index];
+    for(carPart& part : car) {
+        if (part.name == "Body" || part.name == "Bumper_Front" || part.name == "Bumper_Rear" || part.name == "Door_Left" ||
+            part.name == "Door_Right" || part.name == "Fender_Left" || part.name == "Fender_Right" || part.name == "Hood" ||
+            part.name == "Sideskirt" || part.name == "Trunk" || part.name == "Trunk_Bars" || part.name == "Engine_Bay") {
+            part.material.hasTexture = true;
+            part.material.texture = t;
+            if(static_cast<int> (t) == 1){//Matte
+                part.material.ka = 0.2f;
+                part.material.kd = 0.7f;
+                part.material.ks = 0.2f;
+                part.material.shininess = 100;
+            }
+            else if(static_cast<int> (t) == 2){//Iridescent
+                part.material.ka = 0.1f;
+                part.material.kd = 0.6f;
+                part.material.ks = 0.7f;
+                part.material.shininess = 150;
             }
         }
+    }
+}
+
+void loadNone(vector<carPart>& car){
+    GLuint t = 0;
+    for(carPart& part : car) {
+        if (part.name == "Body" || part.name == "Bumper_Front" || part.name == "Bumper_Rear" || part.name == "Door_Left" ||
+            part.name == "Door_Right" || part.name == "Fender_Left" || part.name == "Fender_Right" || part.name == "Hood" ||
+            part.name == "Sideskirt" || part.name == "Trunk" || part.name == "Trunk_Bars" || part.name == "Engine_Bay") {
+            part.material.hasTexture = false;
+            part.material.texture = t;
+            part.material.ka = 0.05f;
+            part.material.kd = 0.5f;
+            part.material.ks = 0.8f;
+            part.material.shininess = 200;
+        }
+    }
+}
+
+void loadGloss(vector<carPart>& car){
+    GLuint t = 0;
+    for(carPart& part : car) {
+        if (part.name == "Body" || part.name == "Bumper_Front" || part.name == "Bumper_Rear" || part.name == "Door_Left" ||
+            part.name == "Door_Right" || part.name == "Fender_Left" || part.name == "Fender_Right" || part.name == "Hood" ||
+            part.name == "Sideskirt" || part.name == "Trunk" || part.name == "Trunk_Bars" || part.name == "Engine_Bay") {
+            part.material.hasTexture = false;
+            part.material.texture = t;
+            part.material.ka = 0.1f;
+            part.material.kd = 0.6f;
+            part.material.ks = 0.5f;
+            part.material.shininess = 100;
+        }
+    }
+}
+
+void changePaintFinish(GLFWwindow* window, vector<carPart>& car){
+    static bool paintReleased = true;
+    if(glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS){
+        if(paintReleased){
+            textureIndex = (textureIndex + 1) % textures.size();
+            if(static_cast<int> (textures[textureIndex]) == 0){
+                loadNone(car);
+            }
+            else if(static_cast<int> (textures[textureIndex]) == 25){
+                loadGloss(car);
+            }
+            else{
+                loadPaint(car, textureIndex);
+            }
+            paintReleased = false;
+        }
+    }
+    else {
+        paintReleased = true;
+    }
+}
+
+void changeColor(GLFWwindow* window, vector<carPart>& R32){
+    static bool colorReleased = true;
+    if(glfwGetKey(window, GLFW_KEY_TAB) == GLFW_PRESS){
+        if(colorReleased){
+            colorIndex = (colorIndex + 1) % colors.size();
+            glm::vec3 newColor = colors[colorIndex];
+            for(carPart& part : R32) {
+                if (part.name == "Body" || part.name == "Bumper_Front" || part.name == "Bumper_Rear" || part.name == "Door_Left" ||
+                    part.name == "Door_Right" || part.name == "Fender_Left" || part.name == "Fender_Right" || part.name == "Hood" ||
+                    part.name == "Sideskirt" || part.name == "Trunk" || part.name == "Trunk_Bars" || part.name == "Engine_Bay") {
+                    part.material.color = newColor;
+                }
+            }
+            colorReleased = false;
+        }
+    }
+    else {
+        colorReleased = true;
     }
 }
 
@@ -228,7 +304,6 @@ void closeHood(carPart& part){
 }
 
 void openLeftDoor(carPart& part, carPart& part2, carPart& part3, carPart& part4, carPart& part5, carPart& part6){
-    cout<<endl;
     Vertex anchor = part.vertices[0];
     Vertex anchor2 = part.vertices[0];
 
@@ -325,7 +400,6 @@ void closeLeftDoor(carPart& part, carPart& part2, carPart& part3, carPart& part4
 }
 
 void openRightDoor(carPart& part, carPart& part2, carPart& part3, carPart& part4, carPart& part5, carPart& part6){
-    cout<<endl;
     Vertex anchor = part.vertices[0];
     Vertex anchor2 = part.vertices[0];
 
@@ -421,7 +495,7 @@ void closeRightDoor(carPart& part, carPart& part2, carPart& part3, carPart& part
     part6.modelMatrix = glm::translate(part6.modelMatrix, -symmetry);
 }
 
-void openTrunk(carPart &part1, carPart &part2, carPart &part3, carPart &part4, carPart &part5, carPart &part6, carPart &part7) {
+void openTrunk(carPart &part1, carPart &part2, carPart &part3, carPart &part4, carPart &part5, carPart &part6, carPart &part7, carPart &part8, carPart &part9, carPart &part10, carPart &part11, carPart &part12) {
     Vertex anchor = part1.vertices[0];
     Vertex anchor2 = part1.vertices[0];
 
@@ -466,9 +540,29 @@ void openTrunk(carPart &part1, carPart &part2, carPart &part3, carPart &part4, c
     part7.modelMatrix = glm::translate(part7.modelMatrix, symmetry);
     part7.modelMatrix = glm::rotate(part7.modelMatrix, glm::radians(80.f), glm::vec3(1.f, 0.f, 0.f));
     part7.modelMatrix = glm::translate(part7.modelMatrix, -symmetry);
+
+    part8.modelMatrix = glm::translate(part8.modelMatrix, symmetry);
+    part8.modelMatrix = glm::rotate(part8.modelMatrix, glm::radians(80.f), glm::vec3(1.f, 0.f, 0.f));
+    part8.modelMatrix = glm::translate(part8.modelMatrix, -symmetry);
+
+    part9.modelMatrix = glm::translate(part9.modelMatrix, symmetry);
+    part9.modelMatrix = glm::rotate(part9.modelMatrix, glm::radians(80.f), glm::vec3(1.f, 0.f, 0.f));
+    part9.modelMatrix = glm::translate(part9.modelMatrix, -symmetry);
+
+    part10.modelMatrix = glm::translate(part10.modelMatrix, symmetry);
+    part10.modelMatrix = glm::rotate(part10.modelMatrix, glm::radians(80.f), glm::vec3(1.f, 0.f, 0.f));
+    part10.modelMatrix = glm::translate(part10.modelMatrix, -symmetry);
+
+    part11.modelMatrix = glm::translate(part11.modelMatrix, symmetry);
+    part11.modelMatrix = glm::rotate(part11.modelMatrix, glm::radians(80.f), glm::vec3(1.f, 0.f, 0.f));
+    part11.modelMatrix = glm::translate(part11.modelMatrix, -symmetry);
+
+    part12.modelMatrix = glm::translate(part12.modelMatrix, symmetry);
+    part12.modelMatrix = glm::rotate(part12.modelMatrix, glm::radians(80.f), glm::vec3(1.f, 0.f, 0.f));
+    part12.modelMatrix = glm::translate(part12.modelMatrix, -symmetry);
 }
 
-void closeTrunk(carPart &part1, carPart &part2, carPart &part3, carPart &part4, carPart &part5, carPart &part6, carPart &part7) {
+void closeTrunk(carPart &part1, carPart &part2, carPart &part3, carPart &part4, carPart &part5, carPart &part6, carPart &part7, carPart &part8, carPart &part9, carPart &part10, carPart &part11, carPart &part12) {
     Vertex anchor = part1.vertices[0];
     Vertex anchor2 = part1.vertices[0];
 
@@ -513,6 +607,26 @@ void closeTrunk(carPart &part1, carPart &part2, carPart &part3, carPart &part4, 
     part7.modelMatrix = glm::translate(part7.modelMatrix, symmetry);
     part7.modelMatrix = glm::rotate(part7.modelMatrix, glm::radians(-80.f), glm::vec3(1.f, 0.f, 0.f));
     part7.modelMatrix = glm::translate(part7.modelMatrix, -symmetry);
+
+    part8.modelMatrix = glm::translate(part8.modelMatrix, symmetry);
+    part8.modelMatrix = glm::rotate(part8.modelMatrix, glm::radians(-80.f), glm::vec3(1.f, 0.f, 0.f));
+    part8.modelMatrix = glm::translate(part8.modelMatrix, -symmetry);
+
+    part9.modelMatrix = glm::translate(part9.modelMatrix, symmetry);
+    part9.modelMatrix = glm::rotate(part9.modelMatrix, glm::radians(-80.f), glm::vec3(1.f, 0.f, 0.f));
+    part9.modelMatrix = glm::translate(part9.modelMatrix, -symmetry);
+
+    part10.modelMatrix = glm::translate(part10.modelMatrix, symmetry);
+    part10.modelMatrix = glm::rotate(part10.modelMatrix, glm::radians(-80.f), glm::vec3(1.f, 0.f, 0.f));
+    part10.modelMatrix = glm::translate(part10.modelMatrix, -symmetry);
+
+    part11.modelMatrix = glm::translate(part11.modelMatrix, symmetry);
+    part11.modelMatrix = glm::rotate(part11.modelMatrix, glm::radians(-80.f), glm::vec3(1.f, 0.f, 0.f));
+    part11.modelMatrix = glm::translate(part11.modelMatrix, -symmetry);
+
+    part12.modelMatrix = glm::translate(part12.modelMatrix, symmetry);
+    part12.modelMatrix = glm::rotate(part12.modelMatrix, glm::radians(-80.f), glm::vec3(1.f, 0.f, 0.f));
+    part12.modelMatrix = glm::translate(part12.modelMatrix, -symmetry);
 }
 
 void explodeVehicle(GLFWwindow* window, vector<carPart>& car){
@@ -522,6 +636,11 @@ void explodeVehicle(GLFWwindow* window, vector<carPart>& car){
     carPart* trunkGlassLeft = nullptr;
     carPart* trunkGlassRight = nullptr;
     carPart* trunkLogo = nullptr;
+    carPart* badgeDarkBlue = nullptr;
+    carPart* badgeFrame = nullptr;
+    carPart* badgeLightBlue = nullptr;
+    carPart* badgeM4 = nullptr;
+    carPart* badgeRed = nullptr;
     carPart* spoiler = nullptr;
     carPart* leftDoorExterior = nullptr;
     carPart* leftDoorInterior = nullptr;
@@ -597,6 +716,21 @@ void explodeVehicle(GLFWwindow* window, vector<carPart>& car){
             else if(part.name == "Mirror_Right_Carbon"){
                 rightMirrorFrame = &part;
             }
+            else if(part.name == "M4_Badge_Dark_Blue"){
+                badgeDarkBlue = &part;
+            }
+            else if(part.name == "M4_Badge_Frame"){
+                badgeFrame = &part;
+            }
+            else if(part.name == "M4_Badge_Light_Blue"){
+                badgeLightBlue = &part;
+            }
+            else if(part.name == "M4_Badge_M4"){
+                badgeM4 = &part;
+            }
+            else if(part.name == "M4_Badge_Red"){
+                badgeRed = &part;
+            }
         }
         if(leftDoorExterior != nullptr &&
             leftDoorInterior != nullptr &&
@@ -624,9 +758,14 @@ void explodeVehicle(GLFWwindow* window, vector<carPart>& car){
             trunkGlassLeft != nullptr &&
             trunkGlassRight != nullptr &&
             trunkLogo != nullptr &&
-            spoiler != nullptr){
+            spoiler != nullptr &&
+            badgeRed != nullptr &&
+            badgeM4 != nullptr &&
+            badgeLightBlue != nullptr &&
+            badgeFrame != nullptr &&
+            badgeDarkBlue != nullptr){
 
-            openTrunk(*trunkBars, *trunk, *trunkLight, *trunkGlassLeft, *trunkGlassRight, *trunkLogo, *spoiler);
+            openTrunk(*trunkBars, *trunk, *trunkLight, *trunkGlassLeft, *trunkGlassRight, *trunkLogo, *spoiler, *badgeDarkBlue, *badgeFrame, *badgeLightBlue, *badgeM4, *badgeRed);
         }
         isOpened = true;
     }
@@ -692,6 +831,21 @@ void explodeVehicle(GLFWwindow* window, vector<carPart>& car){
             else if(part.name == "Mirror_Right_Carbon"){
                 rightMirrorFrame = &part;
             }
+            else if(part.name == "M4_Badge_Dark_Blue"){
+                badgeDarkBlue = &part;
+            }
+            else if(part.name == "M4_Badge_Frame"){
+                badgeFrame = &part;
+            }
+            else if(part.name == "M4_Badge_Light_Blue"){
+                badgeLightBlue = &part;
+            }
+            else if(part.name == "M4_Badge_M4"){
+                badgeM4 = &part;
+            }
+            else if(part.name == "M4_Badge_Red"){
+                badgeRed = &part;
+            }
         }
         if(leftDoorExterior != nullptr &&
            leftDoorInterior != nullptr &&
@@ -719,9 +873,14 @@ void explodeVehicle(GLFWwindow* window, vector<carPart>& car){
            trunkGlassLeft != nullptr &&
            trunkGlassRight != nullptr &&
            trunkLogo != nullptr &&
-           spoiler != nullptr){
+           spoiler != nullptr &&
+           badgeRed != nullptr &&
+           badgeM4 != nullptr &&
+           badgeLightBlue != nullptr &&
+           badgeFrame != nullptr &&
+           badgeDarkBlue != nullptr){
 
-            closeTrunk(*trunkBars, *trunk, *trunkLight, *trunkGlassLeft, *trunkGlassRight, *trunkLogo, *spoiler);
+            closeTrunk(*trunkBars, *trunk, *trunkLight, *trunkGlassLeft, *trunkGlassRight, *trunkLogo, *spoiler, *badgeDarkBlue, *badgeFrame, *badgeLightBlue, *badgeM4, *badgeRed);
         }
 
         isOpened = false;
@@ -770,7 +929,7 @@ int main(){
     //Init GLFW
     glfwInit();
 
-    vector<carPart> M4 = loadModel("../assets/M4_Chopped_Trunk.obj");
+    vector<carPart> M4 = loadModel("../assets/M4.obj");
 
     //Using OpenGL version 3.3
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -811,9 +970,16 @@ int main(){
 
     glm::vec3 newColor(1.f);
 
+    textures.push_back(0);
+    textures.push_back(25);
+    textures.push_back(loadTexture("../assets/Textures/matte.jpg"));
+    textures.push_back(loadTexture("../assets/Textures/iridescent.jpg"));
+    textures.push_back(loadTexture("../assets/Textures/satin.jpg"));
+    textures.push_back(loadTexture("../assets/Textures/wood.jpg"));
     //Model
     //VAO, VBO, EBO
-//    unordered_map<string, carPart> carParts;
+    GLuint carbon = loadTexture("../assets/Textures/common_carbon.jpg");
+    GLuint logo = loadTexture("../assets/Textures/common_bmw_logo.jpg");
     for(carPart& part : M4){
         glGenVertexArrays(1, &part.VAO);
         glBindVertexArray(part.VAO);
@@ -847,92 +1013,186 @@ int main(){
         glm::vec3 carPartColor = glm::vec3 (1.f);
         float opacity = 1.f;
 
-        if(part.name == "Antenna" || part.name == "Underbody" || part.name == "Suspension_Front_Tierod"){ //Black
+        if(part.name == "Antenna" || part.name == "Underbody" || part.name == "Suspension_Front_Tierod" || part.name == "Differentials"){ //Black
             carPartColor = glm::vec3(0.1f);
+            part.material.ka = 0.5f;
+            part.material.kd = 1.f;
+            part.material.ks = 1.f;
+            part.material.shininess = 100;
         }
         else if(part.name == "Tires" || part.name == "Mudflaps"){
             carPartColor = glm::vec3(0.1f);
-            //Set material properties
+            part.material.ka = 1.0f;
+            part.material.kd = 0.5f;
+            part.material.ks = 0.3f;
+            part.material.shininess = 1;
         }
         else if(part.name == "Body" || part.name == "Bumper_Front" || part.name == "Bumper_Rear" || part.name == "Door_Left" ||
         part.name == "Door_Right" || part.name == "Fender_Left" || part.name == "Fender_Right" || part.name == "Hood" ||
-        part.name == "Sideskirt" || part.name == "Trunk" || part.name == "Trunk_Bars"){ //Blue
+        part.name == "Sideskirt" || part.name == "Trunk" || part.name == "Trunk_Bars" || part.name == "Engine_Bay"){ //Blue
             carPartColor = glm::vec3 ((float) 39/255, (float) 182/255, (float) 225/255);
+            part.material.ka = 0.05f;
+            part.material.kd = 0.5f;
+            part.material.ks = 0.8f;
+            part.material.shininess = 200;
         }
         else if(part.name == "Brake_Bolts" || part.name == "Brake_Disc" || part.name == "Brake_Holders"){
             carPartColor = glm::vec3 ((float) 51/255, (float) 50/255, (float) 57/255);
+            part.material.ka = 0.5f;
+            part.material.kd = 1.f;
+            part.material.ks = 1.f;
+            part.material.shininess = 100;
         }
         else if(part.name == "Brake_Calippers" || part.name == "Needles"){
             carPartColor = glm::vec3 ((float) 240/255, (float) 0/255, (float) 10/255);
+            part.material.ka = 0.5f;
+            part.material.kd = 1.f;
+            part.material.ks = 1.f;
+            part.material.shininess = 100;
         }
         else if(part.name == "Bumper_Front_Grille_Bottom"){
             carPartColor = glm::vec3 ((float) 0/255, (float) 0/255, (float) 15/255);
+            part.material.ka = 0.5f;
+            part.material.kd = 1.f;
+            part.material.ks = 1.f;
+            part.material.shininess = 100;
         }
         else if(part.name == "Bumper_Front_Grille_Top"){
             carPartColor = glm::vec3 ((float) 50/255, (float) 50/255, (float) 50/255);
+            part.material.ka = 0.5f;
+            part.material.kd = 1.f;
+            part.material.ks = 1.f;
+            part.material.shininess = 100;
         }
         else if(part.name == "Exhaust_Output"){
-            carPartColor = glm::vec3 ((float) 150/255, (float) 150/255, (float) 150/255);
+            carPartColor = glm::vec3 (0.2f);
+            part.material.ka = 0.5f;
+            part.material.kd = 1.f;
+            part.material.ks = 1.f;
+            part.material.shininess = 100;
             //Texture here
         }
-        else if(part.name == "Exhaust_Pipe" || part.name == "Pedal_Brake" || part.name == "Pedal_Gas"){
-            carPartColor = glm::vec3 ((float) 150/255, (float) 150/255, (float) 150/255);
+        else if(part.name == "Pedal_Brake" || part.name == "Pedal_Gas"){
+            carPartColor = glm::vec3 ((float) 125/255, (float) 125/255, (float) 125/255);
+            part.material.ka = 0.5f;
+            part.material.kd = 1.f;
+            part.material.ks = 1.f;
+            part.material.shininess = 100;
         }
-        else if(part.name == "Suspension_Back" || part.name == "Suspension_Front" || part.name == "Suspension_Lower_Arm_Back"){ //Engine Color
-            carPartColor = glm::vec3 ((float) 150/255, (float) 150/255, (float) 150/255);
+        else if(part.name == "Exhaust_Pipe" || part.name == "Suspension_Upper_Arm_Back" || part.name == "Suspension_Front" ||
+        part.name == "Suspension_Lower_Arm_Back" || part.name == "Suspension_Lower_Arm_Front" || part.name == "Driveshaft" ||
+        part.name == "Engine" || part.name == "Floor" || part.name == "Frame" || part.name == "Transmission"){ //Engine Color
+            carPartColor = glm::vec3 (0.2f);
+            part.material.ka = 0.5f;
+            part.material.kd = 1.f;
+            part.material.ks = 1.f;
+            part.material.shininess = 100;
         }
         else if(part.name == "M4_Badge_Dark_Blue"){
             carPartColor = glm::vec3 ((float) 14/255, (float) 57/255, (float) 118/255);
+            part.material.ka = 0.5f;
+            part.material.kd = 1.f;
+            part.material.ks = 1.f;
+            part.material.shininess = 100;
         }
         else if(part.name == "M4_Badge_Light_Blue"){
             carPartColor = glm::vec3 ((float) 20/255, (float) 95/255, (float) 175/255);
+            part.material.ka = 0.5f;
+            part.material.kd = 1.f;
+            part.material.ks = 1.f;
+            part.material.shininess = 100;
         }
         else if(part.name == "M4_Badge_Red"){
             carPartColor = glm::vec3 ((float) 223/255, (float) 29/255, (float) 30/255);
+            part.material.ka = 0.5f;
+            part.material.kd = 1.f;
+            part.material.ks = 1.f;
+            part.material.shininess = 100;
         }
         else if(part.name == "M4_Badge_Frame" || part.name == "M4_Badge_M4"){
             carPartColor = glm::vec3 ((float) 41/255, (float) 41/255, (float) 49/255);
+            part.material.ka = 0.5f;
+            part.material.kd = 1.f;
+            part.material.ks = 1.f;
+            part.material.shininess = 100;
         }
         else if(part.name == "Window_Back" || part.name == "Window_Rear_Left" || part.name == "Window_Rear_Right"){
             carPartColor = glm::vec3 ((float) 35/255, (float) 42/255, (float) 42/255);
             opacity = 0.2f;
+            part.material.ka = 0.3f;
+            part.material.kd = 0.7f;
+            part.material.ks = 0.7f;
+            part.material.shininess = 100;
         }
         else if(part.name == "Window_Front" || part.name == "Window_Door_Left" || part.name == "Window_Door_Right"){
             carPartColor = glm::vec3 ((float) 218/255, (float) 236/255, (float) 254/255);
             opacity = 0.15f;
+            part.material.ka = 0.3f;
+            part.material.kd = 0.7f;
+            part.material.ks = 1.f;
+            part.material.shininess = 100;
         }
         else if(part.name == "Mirror_Left_Glass" || part.name == "Mirror_Right_Glass"){
             carPartColor = glm::vec3 ((float) 245/255, (float) 245/255, (float) 245/255);
             opacity = 0.4f;
+            part.material.ka = 0.3f;
+            part.material.kd = 0.7f;
+            part.material.ks = 1.f;
+            part.material.shininess = 100;
         }
         else if(part.name == "Headlight_Left_Glass" || part.name == "Headlight_Right_Glass"){
             carPartColor = glm::vec3 ((float) 218/255, (float) 236/255, (float) 254/255);
             opacity = 0.1f;
+            part.material.ka = 0.3f;
+            part.material.kd = 0.7f;
+            part.material.ks = 1.f;
+            part.material.shininess = 100;
         }
-        else if(part.name == "Headlight_Left_Light" || part.name == "Headlight_Right_Light"){
+        else if(part.name == "Headlight_Left_Light" || part.name == "Headlight_Right_Light" || part.name == "Trunklight_Light" || part.name == "Taillight_Left_Light" || part.name == "Taillight_Right_Light"){
             carPartColor = glm::vec3 ((float) 74/255, (float) 74/255, (float) 82/255);
+            part.material.ka = 0.5f;
+            part.material.kd = 1.f;
+            part.material.ks = 1.f;
+            part.material.shininess = 100;
         }
         else if(part.name == "Taillight_Left_Glass" || part.name == "Taillight_Right_Glass" || part.name == "Trunklight_Left_Glass" || part.name == "Trunklight_Right_Glass"){
             carPartColor = glm::vec3 ((float) 117/255, (float) 7/255, (float) 19/255);
             opacity = 0.25f;
+            part.material.ka = 0.3f;
+            part.material.kd = 0.7f;
+            part.material.ks = 0.7f;
+            part.material.shininess = 100;
         }
         else if(part.name.find("Interior") == 0 || part.name.find("Seat") == 0 || part.name == "Door_Left_Interior" ||
-        part.name == "Door_Right_Interior" || part.name == "Flasher"){
-            carPartColor = glm::vec3 (0.2f);
+        part.name == "Door_Right_Interior" || part.name == "Flasher" || part.name == "Steering_Wheel_Carbon" || part.name == "Sun_Visor"){
+            carPartColor = glm::vec3 ((float) 50/255, (float) 50/255, (float) 50/255);
+            part.material.ka = 0.7f;
+            part.material.kd = 1.f;
+            part.material.ks = 0.1f;
+            part.material.shininess = 1;
         }
         else if(part.name == "Spoiler_Carbon" || part.name == "Bumper_Front_Accent_Carbon" || part.name == "Bumper_Front_Carbon" ||
         part.name == "Bumper_Rear_Accent_Carbon" || part.name == "Door_Left_Handle_Carbon" || part.name == "Door_Right_Handle_Carbon" ||
         part.name == "Diffuser_Rear_Carbon" || part.name == "Mag_Front_Left" || part.name == "Mag_Front_Right" || part.name == "Mag_Rear_Left" ||
         part.name == "Mag_Rear_Right" || part.name == "Mirror_Left_Carbon" || part.name == "Mirror_Right_Carbon" || part.name == "Roof" ||
-        part.name == "Splitter_Carbon" || part.name == "Steering_Wheel_Carbon"){
-            part.texture = loadTexture("../assets/Textures/common_carbon.jpg");
+        part.name == "Splitter_Carbon"){
+            part.material.texture = carbon;
             carPartColor = glm::vec3(1.f);
-            part.hasTexture = true;
+            part.material.hasTexture = true;
+            part.material.ka = 1.0f;
+            part.material.kd = 0.5f;
+            part.material.ks = 0.1f;
+            part.material.shininess = 1;
         }
-        else if(part.name == "Logo_Front" || part.name == "Logo_Back"){ //Bugged
-            part.texture = loadTexture("../assets/Textures/BMW_logo.jpg");
+        else if(part.name == "Logo_Front" || part.name == "Logo_Back"){
+            carPartColor = glm::vec3(0.1f);
+            part.material.texture = logo;
             carPartColor = glm::vec3(1.f);
-            part.texture = true;
+            part.material.hasTexture = true;
+            part.material.ka = 0.5f;
+            part.material.kd = 1.f;
+            part.material.ks = 1.f;
+            part.material.shininess = 100;
         }
         part.material.color = carPartColor;
         part.material.opacity = opacity;
@@ -940,9 +1200,9 @@ int main(){
 
     std::sort(M4.begin(), M4.end(), compareOpacity);
 //    cout<<"Update: "<<endl;
-    for(carPart part : M4){
-        cout<<part.name<<endl;
-    }
+//    for(carPart part : M4){
+//        cout<<part.name<<endl;
+//    }
 
     //Basic camera initialisation
     Camera camera(glm::vec3(0.f, 0.f, 3.f), glm::vec3 (0.f, 0.f, 0.f));
@@ -960,7 +1220,8 @@ int main(){
     ProjectionMatrix = glm::perspective(glm::radians(fov), static_cast<float> (windowWidth) / windowHeight, nearPlane, farPlane);
 
     //Lights
-    glm::vec3 lightPosition0 = camera.position;
+    Light lightFront;
+    lightFront.position = glm::vec3(0.f, 0.f, 3.f);
     glm::vec3 lightColorInterior((float) 240/255, (float) 255/255, (float) 255/255);
 
 
@@ -969,7 +1230,8 @@ int main(){
     core_program.setMat4fv(ViewMatrix, "ViewMatrix");
     core_program.setMat4fv(ProjectionMatrix, "ProjectionMatrix");
 
-    core_program.setVector3f(lightPosition0, "lightPosition0");
+//    core_program.setVector3f(lightBack.position, "lightPosition1");
+    core_program.setVector3f(lightFront.position, "lightPosition0");
     core_program.setVector3f(camera.position, "cameraPosition");
 
     core_program.setVector3f(lightColorInterior, "lightColor");
@@ -988,7 +1250,8 @@ int main(){
         glfwPollEvents();
         controlCamera(window, deltaTime, camera);
         ViewMatrix = camera.viewMatrix;
-        changeColor(window, M4, newColor);
+        changeColor(window, M4);
+        changePaintFinish(window, M4);
 
         //Update params --
         updateInput(window);
@@ -1003,8 +1266,8 @@ int main(){
         //Translate, Rotate, Scale
         explodeVehicle(window, M4);
 
-        lightPosition0 = camera.position;
-        core_program.setVector3f(lightPosition0, "lightPosition0");
+        lightFront.position = camera.position;
+        core_program.setVector3f(lightFront.position, "lightPosition0");
 
         core_program.setMat4fv(ViewMatrix, "ViewMatrix");
 
@@ -1014,14 +1277,18 @@ int main(){
 
         //Bind vertex array object
         for(carPart& part : M4){
-            core_program.setBool(part.hasTexture, "hasTexture");
+            core_program.setBool(part.material.hasTexture, "hasTexture");
             core_program.setMat4fv(part.modelMatrix, "ModelMatrix");
             int nbOfVertices = (int) part.vertices.size();
             core_program.setVector3f(part.material.color, "modifiedColor");
             core_program.set1f(part.material.opacity, "opacity");
-            if(part.hasTexture){
+            core_program.set1f(part.material.ka, "ka");
+            core_program.set1f(part.material.kd, "kd");
+            core_program.set1f(part.material.ks, "ks");
+            core_program.set1f(part.material.shininess, "shininess");
+            if(part.material.hasTexture){
                 glActiveTexture(GL_TEXTURE0);
-                glBindTexture(GL_TEXTURE_2D, part.texture);
+                glBindTexture(GL_TEXTURE_2D, part.material.texture);
             }
             glBindVertexArray(part.VAO);
             //Draw

@@ -31,8 +31,7 @@ struct carPart {
     vector<Vertex> vertices;
     string name;
     Material material;
-    GLuint texture;
-    bool hasTexture = false;
+
 
     glm::mat4 modelMatrix = glm::mat4(1.f);
     GLuint VAO;
@@ -54,7 +53,7 @@ static vector<carPart> loadModel(const string path)
         }
 
         for(tinyobj::shape_t shape: shapes){
-//            cout<<shape.name<<endl;
+            cout<<shape.name<<endl;
             carPart currentPart;
             currentPart.name = shape.name;
             for(tinyobj::index_t index : shape.mesh.indices){

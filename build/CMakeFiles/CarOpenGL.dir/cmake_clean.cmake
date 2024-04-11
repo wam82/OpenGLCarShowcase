@@ -11,8 +11,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/CarOpenGL.dir/imgui/imgui_tables.cpp.o.d"
   "CMakeFiles/CarOpenGL.dir/imgui/imgui_widgets.cpp.o"
   "CMakeFiles/CarOpenGL.dir/imgui/imgui_widgets.cpp.o.d"
-  "CMakeFiles/CarOpenGL.dir/src/old/main2.cpp.o"
-  "CMakeFiles/CarOpenGL.dir/src/old/main2.cpp.o.d"
+  "CMakeFiles/CarOpenGL.dir/src/main.cpp.o"
+  "CMakeFiles/CarOpenGL.dir/src/main.cpp.o.d"
   "CarOpenGL"
   "CarOpenGL.pdb"
 )
